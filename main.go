@@ -8,13 +8,13 @@ import (
 	"os"
 	"regexp"
 	"strings"
-
 	_ "github.com/go-sql-driver/mysql"
 )
 
+
 func main() {
     dsn := "root:javyroot@tcp(localhost:3306)/movie_db"
-    db, err := sql.Open("mysql", dsn)
+	db, err := sql.Open("mysql", dsn)
     if err != nil {
         log.Fatalf("Error connecting to the database: %v", err)
     }
@@ -49,16 +49,15 @@ func handleCommands(db *sql.DB) {
 		}
 
 		input := scanner.Text()
-		parts := strings.Fields(input) // Split by spaces and remove extra spaces
+		parts := strings.Fields(input)
 		
 		if len(parts) == 0 {
 			fmt.Println("Please enter a command.")
 			continue
 		}
 
-		// l -v
-		command := parts[0] // l
-		args := parts[1:]   // [-v]
+		command := parts[0] 
+		args := parts[1:]   
 
 		switch command {
 		case "l":
@@ -85,22 +84,14 @@ func handleListMovies(db *sql.DB, args []string) {
 	var verbose, orderByLengthAsc, orderByLengthDesc bool
 	var titleFilter, directorFilter, actorFilter string
 
-	// Combine args into a single string to handle quotes
 	input := strings.Join(args, " ")
-	fmt.Println(input)
 	
-	// Define regex to match flags and quoted arguments
 	re := regexp.MustCompile(`-(\w)(?:\s+"([^"]+)"|\s+(\S+))?`)
-	fmt.Println(re)
 
-	// Find all matches
 	matches := re.FindAllStringSubmatch(input, -1)
-	fmt.Println(matches)
-	for _, match := range matches {
-		fmt.Println(match)
 
+	for _, match := range matches {
 		flag := match[1]
-		fmt.Println(flag)
 		var value string
 		if match[2] != "" {
 			value = match[2]
@@ -113,7 +104,7 @@ func handleListMovies(db *sql.DB, args []string) {
 			verbose = true
 		case "t":
 			if value != "" {
-				titleFilter = value // Star
+				titleFilter = value 
 
 			} else {
 				fmt.Println("No regex provided for -t switch")
@@ -156,7 +147,7 @@ func handleListMovies(db *sql.DB, args []string) {
 		return
 	}
 
-	listMovies(db, verbose, titleFilter, directorFilter, actorFilter, orderByLengthAsc, orderByLengthDesc)
+	ListMovies(db, verbose, titleFilter, directorFilter, actorFilter, orderByLengthAsc, orderByLengthDesc)
 }
 
 func handleAddCommands(db *sql.DB, args []string, scanner *bufio.Scanner) {
@@ -195,7 +186,6 @@ func addMovieInteractive(db *sql.DB, scanner *bufio.Scanner) {
 		}
 		length = scanner.Text()
 
-		// Parse length into hours and minutes
 		if _, err := fmt.Sscanf(length, "%d:%d", &hours, &minutes); err != nil || hours < 0 || minutes < 0 || minutes >= 60 {
 			fmt.Println("Bad input format (hh:mm), try again!")
 		} else {
@@ -243,7 +233,7 @@ func addMovieInteractive(db *sql.DB, scanner *bufio.Scanner) {
 		}
 	}
 	totalMinutes := hours*60 + minutes
-	addMovie(db, title, totalMinutes, director, releaseYear, actors)
+	AddMovie(db, title, totalMinutes, director, releaseYear, actors)
 }
 
 func addPersonInteractive(db *sql.DB, scanner *bufio.Scanner) {
@@ -259,7 +249,7 @@ func addPersonInteractive(db *sql.DB, scanner *bufio.Scanner) {
 	if _, err := fmt.Scanln(&birthYear); err != nil {
 		log.Fatalf("Error scanning birth year: %v", err)
 	}
-	addPerson(db, name, birthYear)
+	AddPerson(db, name, birthYear)
 }
 
 func handleDeleteCommands(db *sql.DB, args []string, scanner *bufio.Scanner) {
@@ -270,7 +260,7 @@ func handleDeleteCommands(db *sql.DB, args []string, scanner *bufio.Scanner) {
 			log.Fatalf("Error reading name: %v", scanner.Err())
 		}
 		name = scanner.Text()
-		deletePerson(db, name)
+		DeletePerson(db, name)
 	} else {
 		fmt.Println("Invalid delete command. Use 'p' for person.")
 	}
@@ -298,58 +288,3 @@ func printCommandDocumentation() {
 	fmt.Println("- Exit Application: exit")
 	fmt.Println("============================================================================")
 }
-
-
-// func handleAddCommands(db *sql.DB, args []string, scanner *bufio.Scanner) {
-// 	if len(args) == 0 {
-// 		fmt.Println("Please specify what you want to add (movie or person).")
-// 		return
-// 	}
-
-// 	switch args[0] {
-// 	case "-m":
-// 		fmt.Println("Enter the movie details:")
-// 		fmt.Print("Title: ")
-// 		scanner.Scan()
-// 		title := scanner.Text()
-// 		fmt.Print("Length (in minutes): ")
-// 		scanner.Scan()
-// 		length, err := strconv.Atoi(scanner.Text())
-// 		if err != nil {
-// 			fmt.Println("Invalid length.")
-// 			return
-// 		}
-// 		fmt.Print("Director: ")
-// 		scanner.Scan()
-// 		director := scanner.Text()
-// 		fmt.Print("Release Year: ")
-// 		scanner.Scan()
-// 		releaseYear, err := strconv.Atoi(scanner.Text())
-// 		if err != nil {
-// 			fmt.Println("Invalid release year.")
-// 			return
-// 		}
-
-// 		fmt.Println("Enter actors (comma separated):")
-// 		scanner.Scan()
-// 		actors := strings.Split(scanner.Text(), ",")
-
-// 		addMovie(db, title, length, director, releaseYear, actors)
-// 	case "-p":
-// 		fmt.Println("Enter the person details:")
-// 		fmt.Print("Name: ")
-// 		scanner.Scan()
-// 		name := scanner.Text()
-// 		fmt.Print("Birth Year: ")
-// 		scanner.Scan()
-// 		birthYear, err := strconv.Atoi(scanner.Text())
-// 		if err != nil {
-// 			fmt.Println("Invalid birth year.")
-// 			return
-// 		}
-
-// 		addPerson(db, name, birthYear)
-// 	default:
-// 		fmt.Println("Invalid add command. Use 'm' for movie or 'p' for person.")
-// 	}
-// }

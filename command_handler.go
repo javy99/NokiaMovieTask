@@ -7,8 +7,7 @@ import (
 	"strings"
 )
 
-// listActorsForMovie prints the actors for a given movie.
-func listActorsForMovie(db *sql.DB, title, director string) {
+func ListActorsForMovie(db *sql.DB, title, director string) {
 	query := `
 		SELECT p.name, p.birth_year, m.release_year
 		FROM people p
@@ -34,8 +33,7 @@ func listActorsForMovie(db *sql.DB, title, director string) {
 	}
 }
 
-// listMovies lists movies based on provided filters and options.
-func listMovies(db *sql.DB, verbose bool, titleFilter, directorFilter, actorFilter string, orderByLengthAsc, orderByLengthDesc bool) {
+func ListMovies(db *sql.DB, verbose bool, titleFilter, directorFilter, actorFilter string, orderByLengthAsc, orderByLengthDesc bool) {
 	query := `
 		SELECT m.title, p.name, m.release_year, m.length
 		FROM movies m
@@ -85,15 +83,14 @@ func listMovies(db *sql.DB, verbose bool, titleFilter, directorFilter, actorFilt
 		lengthFormatted := fmt.Sprintf("%02d:%02d", length/60, length%60)
 		if verbose {
 			fmt.Printf("%s by %s in %d, %s\n", title, director, year, lengthFormatted)
-			listActorsForMovie(db, title, director)
+			ListActorsForMovie(db, title, director)
 		} else {
 			fmt.Printf("%s by %s in %d, %s\n", title, director, year, lengthFormatted)
 		}
 	}
 }
 
-// addPerson adds a new person to the database.
-func addPerson(db *sql.DB, name string, birthYear int) {
+func AddPerson(db *sql.DB, name string, birthYear int) {
 	query := `
 		INSERT INTO people (name, birth_year)
 		VALUES (?, ?)
@@ -105,9 +102,7 @@ func addPerson(db *sql.DB, name string, birthYear int) {
 	fmt.Println("Person added successfully!")
 }
 
-// addMovie adds a new movie to the database.
-func addMovie(db *sql.DB, title string, length int, director string, releaseYear int, actors []string) {
-	// Check if the movie already exists
+func AddMovie(db *sql.DB, title string, length int, director string, releaseYear int, actors []string) {
 	var existingMovieID int
 	err := db.QueryRow("SELECT id FROM movies WHERE title = ? AND director_id = (SELECT id FROM people WHERE name = ?)", title, director).Scan(&existingMovieID)
 	if err == nil {
@@ -156,8 +151,7 @@ func addMovie(db *sql.DB, title string, length int, director string, releaseYear
 	fmt.Println("Movie added successfully!")
 }
 
-// deletePerson deletes a person from the database.
-func deletePerson(db *sql.DB, name string) {
+func DeletePerson(db *sql.DB, name string) {
 	var id int
 	err := db.QueryRow("SELECT id FROM people WHERE name = ?", name).Scan(&id)
 	if err != nil {
