@@ -1,0 +1,51 @@
+Movie Database Setup Documentation
+
+This console application manages a movie database using a relational database structure. 
+Below are the SQL commands to set up the required tables:
+
+1. Database Creation and Selection:
+
+   CREATE DATABASE movie_db;
+   USE movie_db;
+
+2. People Table:
+   - Stores information about individuals involved in movies (directors and actors).
+   - Each person is identified uniquely by their id.
+
+   CREATE TABLE people (
+       id INT AUTO_INCREMENT PRIMARY KEY,
+       name VARCHAR(255) NOT NULL UNIQUE,
+       birth_year INT NOT NULL
+   );
+
+3. Movies Table:
+   - Stores details of each movie including title, director, release year, and length.
+   - The director_id column references the id of the director in the people table.
+
+   CREATE TABLE movies (
+       id INT AUTO_INCREMENT PRIMARY KEY,
+       title VARCHAR(255) NOT NULL,
+       director_id INT,
+       release_year INT NOT NULL,
+       length INT NOT NULL,
+       FOREIGN KEY (director_id) REFERENCES people(id)
+   );
+
+4. Movie Actors Table:
+   - Manages the many-to-many relationship between movies and actors.
+   - Each record links a movie_id to an actor_id.
+   - The primary key (movie_id, actor_id) ensures uniqueness of movie-actor pairs.
+
+   CREATE TABLE movie_actors (
+       movie_id INT,
+       actor_id INT,
+       FOREIGN KEY (movie_id) REFERENCES movies(id),
+       FOREIGN KEY (actor_id) REFERENCES people(id),
+       PRIMARY KEY (movie_id, actor_id)
+   );
+
+
+5. Connecting to Your MySQL Database:
+   - To connect to your MySQL database, modify the DSN (Data Source Name) in your Go application:
+
+dsn := "your_username:your_password@tcp(localhost:3306)/movie_db"
