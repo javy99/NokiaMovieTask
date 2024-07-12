@@ -1,31 +1,32 @@
-	NokiaMovieTask
+NokiaMovieTask
  
-	Your task is to create a console application that can list and alter a database of movies, directors and actors. You should use Go language.
+Your task is to create a console application that can list and alter a database of movies, directors and actors. You should use Go language.
  
-	"Database" can be a real relational database on your computer, but can be just a text file, which is parsed and gradually updated, it is up to you.
+"Database" can be a real relational database on your computer, but can be just a text file, which is parsed and gradually updated, it is up to you.
  
-	We know the following facts about a movie:
-		- Its title
-		- Its director
-		- Its release year
-		- Some of its actors
-		- Its length (given in minutes)
-	It is possible to have different movies with the same title, but movies with the same title and same director should be treated as the same.
-	An actor can be a director and a director can be an actor. We know the birth year of each actor and director. We can indentify these people with their name.
- 
-	The console application should meet the following requirements:
- 
+We know the following facts about a movie:
+	- Its title
+	- Its director
+	- Its release year
+	- Some of its actors
+	- Its length (given in minutes)
+
+It is possible to have different movies with the same title, but movies with the same title and same director should be treated as the same.
+An actor can be a director and a director can be an actor. We know the birth year of each actor and director. We can identify these people with their name.
+
+The console application should meet the following requirements:
+
 	On startup it tries to connect to the database and informs the user about its success. In case of failure, terminates the program.
 	After successful connection, the program should support the following commands provided on standard input:
  
 	- If the user enters "l" it lists the movies (each on a separate line), following this format:
-<title> by <director> in <year>, <length>
+	<title> by <director> in <year>, <length>
 		- length should be rendered in hh:mm format with leading zeros
-	- If the user types "l -v" the entry for a movie will be shown in this format:
-<title> by <director> in <year>, <length>
-		Starring:
-			- <actor1 name> at age <age in years at the release of the film>
-			- <actor2 name> at age <age in years at the release of the film>
+		- If the user types "l -v" the entry for a movie will be shown in this format:
+			<title> by <director> in <year>, <length>
+			Starring:
+				- <actor1 name> at age <age in years at the release of the film>
+				- <actor2 name> at age <age in years at the release of the film>
 	- If the user adds the "-t" switch, after that between quotes a regex can be given to match the title with. Example:
 		l -t "Die .*" -v
 			- That will print Die Hard 1. and Die Hard 2. with its starring
@@ -39,8 +40,8 @@
  
 	- If the user enters "a" then they can add new entries to the database
 		- "a -p" allows to add new people. After entering this the user will be prompted to give a name and the year of birth for the person.
-		- "a -m" allows to add new movie. After entering this the user will be prompted to give a title, then give the length in hh:mm format, then name the director, then give the year of release, finally name the actors. Actors are given line by line. When an actor (or the director) is not available in the database, print an error message. Do this until a correct name is entered. In case of actors "exit" is a special value, this will finalize the record and add it to the database.
-		- Output should be something like this:
+		- "a -m" allows to add new movie. After entering this the user will be prompted to give a title, then give the length in hh:mm format, then name the director, then give the year of release, finally name the actors. 			Actors are given line by line. When an actor (or the director) is not available in the database, print an error message. Do this until a correct name is entered. In case of actors "exit" is a special value, this will 		finalize the record and add it to the database.
+	- Output should be something like this:
 > a -m
 > Title: Star Wars 1.
 > Length: 13
@@ -60,49 +61,3 @@
 	- Unit tests or at least some relevant test inputs are welcome
 	- Try to write self-documenting, well-organized code
 	- If the build and run of your code is not trivial, please write a short documentation about it
-
-===================================================================================================
-
-Console Application Documentation
-Commands:
-1.	List Movies (l):
-	Lists all movies in the database.
-	Usage:
-		l: Lists movies in alphabetical order by title.
-		l -v: Lists movies with additional details including actors and their ages at the time of release.
-		l -t "regex": Lists movies matching the specified title regex pattern.
-		l -d "regex": Filters movies by directors matching the specified regex pattern.
-		l -a "regex": Filters movies by actors matching the specified regex pattern.
-		l -la: Lists movies in ascending order by length, then alphabetically by title.
-		l -ld: Lists movies in descending order by length, then alphabetically by title.
-2.	Add Commands (a):
-	Allows adding new entries to the database.
-	Usage:
-		a -p: Adds a new person (actor/director) to the database. Prompts for name and birth year.
-		a -m: Adds a new movie to the database. Prompts for title, length (in hh
-		format), director, release year, and actors.
-3.	Delete Commands (d):
-	Allows deleting entries from the database.
-	Usage:
-		d -p "name": Deletes a person (actor/director) from the database. Deletes them from all movies they starred in if not a director of any movie.
-4.	Exit (exit):
-	Exits the console application.
-
-Additional Notes:
-Quoting: Use quotes around regex patterns to ensure they are parsed correctly.
-Ordering: Use either -la (ascending by length) or -ld (descending by length) to order movies by length.
-Switches: Switches can be combined in any order after the main command (l, a, d). Ensure correct syntax to avoid errors.
-This documentation provides a quick overview of the available commands and their syntax, helping users navigate and interact with the console application effectively.
-
-
-===================================================================================================
-
-// func handleListMovies(db *sql.DB, args []string) {
-// 	verbose := false
-// 	for _, arg := range args {
-// 		if arg == "-v" {
-// 			verbose = true
-// 		}
-// 	}
-// 	listMovies(db, verbose)
-// }
